@@ -1,0 +1,16 @@
+{
+  "mandrill_events": [
+    {
+      "event": "send",
+      "_id": "send12344"
+    },
+    {
+      "event": "open",
+      "_id": "open798"
+    },
+    {
+      "event": "open",
+      "_id": "open123"
+    }
+  ]
+}

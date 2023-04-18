@@ -1,0 +1,31 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>Work Genius client</title>
+    <script src="https://code.jquery.com/jquery-3.6.4.slim.min.js" integrity="sha256-a2yjHM4jnF9f54xUQakjZGaqYs/V1CYvWpoqZzC2/Bw=" crossorigin="anonymous"></script>
+    <script src="https://cdn.socket.io/4.6.0/socket.io.min.js" integrity="sha384-c79GN5VsunZvi+Q/WObgk2in0CbZsHnjEqvFxC5DxHn9lTfNce2WW6h2pH6u/kF+" crossorigin="anonymous"></script>
+    <script type="text/javascript" charset="utf-8">
+        $(document).ready(function() {
+            const socket = io();
+
+            // Let the backend know that connection is established
+            socket.on('connect', function() {
+                socket.emit('connection', {data: 'Client\'s connected!'});
+            });
+            
+            // Event handler for server sent data.
+            socket.on('notification', function(data) {
+                text = ""
+                for (let event in data){
+                    text += data[event] + '-' + event + '; '
+                };
+                $("#log").text("Messages : " + text);
+            });
+        });
+    </script>
+</head>
+<body>
+    <h1>Work Genius client</h1>
+    <div id="log">No messages received yet !</div>
+</body>
+</html>
