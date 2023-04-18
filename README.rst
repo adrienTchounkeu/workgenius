@@ -1,11 +1,11 @@
 WorkGenius WebHook Mandrill
 ================================
 
-|Python-Versions| |pip-Version| |flask-Version| |redis-Version| |flask-socketio-Version| |pytest-Version| |mock-Version|
+|Python-Versions| |pip-Version| |flask-Version| |redis-Version| |flask-socketio| |pytest-Version| |mock-Version|
 |black-Version| |isort-Version| |flake8-Version| |mypy-Version|
 
 ``WorkGenius Assignment`` is a Flask Backend application that listens to POST requests from Mandrill and send Websockets data to connected clients. 
-In fact, Mandrill sends a standard HTTP post request with the parameter `mandrill_events` which is a `JSON Array <https://gist.github.com/adrienTchounkeu/af41ad8426f9d68c84429458c4739e71>` of webhooks events, messages
+In fact, Mandrill sends a standard HTTP post request with the parameter ``mandrill_events`` which is a `JSON Array <https://gist.github.com/adrienTchounkeu/af41ad8426f9d68c84429458c4739e71>`_ of webhooks events, messages
 events in particular. The Backend now listens and process this JSON data. First, it stores into a Redis cache and then sends this information to the 
 connected clients via Websockets. 
 
@@ -76,15 +76,15 @@ or
    python3 run.py # on Linux and Mac
 
 
-To run the Redis server, follow this link `Install & Run Redis <https://redis.io/docs/getting-started/>`
+To run the Redis server, follow this link `Install & Run Redis <https://redis.io/docs/getting-started/>`_
 
 NB: *The server generally starts on the port 5000*
 
 
 Frontend App(Client)
-############
+~~~~~~~~~~~~~~~~~~~~~
 
-* The CLient is a simple index.html page that is served by the flask backend from the endpoint `/`. You can access through the link `CLient App <>`_
+* The CLient is a simple index.html page that is served by the flask backend from the endpoint ``/``. You can access through the link `CLient App <https://github.com/adrienTchounkeu/workgenius/tree/master/templates>`_
 
 
 
@@ -96,7 +96,7 @@ Before starting coding, we have to understand the problem and think of the solut
 
 * Choose a great backend framework that supports websockets : Flask for instance
 * Create customs events to dispatch upon connection and send data action
-* Mandrill is sending an array of events. We need to send less and readable information to the client. See this function `count_messages_by_event <>`
+* Mandrill is sending an array of events. We need to send less and readable information to the client. See this function `count_messages_by_event <https://github.com/adrienTchounkeu/workgenius/blob/master/helpers/messages.py#L23>`_
 * A simple cache server : Redis for instance
 
 
@@ -108,7 +108,7 @@ Assumptions
 
 To solve the problem, we did some hypothesis:
 
-* The JSON data sent by Mandrill has this format `mandrill_events <https://gist.github.com/adrienTchounkeu/af41ad8426f9d68c84429458c4739e71>`
+* The JSON data sent by Mandrill has this format `mandrill_events <https://gist.github.com/adrienTchounkeu/af41ad8426f9d68c84429458c4739e71>`_
 
 Solution
 ~~~~~~~~~~~
@@ -116,9 +116,9 @@ Solution
 We used ``flask``, ``socketIO`` and ``redis`` to:
 
 * listen for connection with Client and log successfully connection messages
-* create POST endoint `/message-events` to process data sent from Mandrill
-* store all the messages events in redis(check `db/cache.py`). For each message, the redis key associated is the `_id` of the message
-* compute the JSON array and regroup it by event type. See the count_messages_by_event function in `helpers/messages.py` 
+* create POST endoint ``/message-events`` to process data sent from Mandrill
+* store all the messages events in redis(check **db/cache.py**). For each message, the redis key associated is the `_id` of the message
+* compute the JSON array and regroup it by event type. See the `count_messages_by_event <https://github.com/adrienTchounkeu/workgenius/blob/master/helpers/messages.py#L23>`_ function in **helpers/messages.py** 
 * send the obtained dictionnary to the client
 * display on client
 
@@ -126,18 +126,21 @@ We used ``flask``, ``socketIO`` and ``redis`` to:
 Flow
 ~~~~~
 
-* After running the server with `python run.py` and having the serving listening on 5000, you can walk through the / endpoint and you will see the client
-![CLient Page](readme_images/client.png)
-* A connection is then established between client and the server. The server receives data from the client upon connection.
-You can check the logs on server and you will see : `helpers.logger - INFO - Client is connected with message : {'data': "Client's connected!"}`
-* To simulate a POST request from Mandrill, I will send the following payload to the API
-![Mandrill Payload](readme_images/payload.png)
-* Two messages are logs by the server, respectively upon redis persistence confirmation and notification events sent to client. 
-`helpers.logger - INFO - Mandrills Events successfully stored on Redis` and 
-`helpers.logger - INFO - Events sent to Client`
-* The client then displays the number of emails for each type of event
-![Client receives events messages](readme_images/client_messages.png)
-
+* After running the server with `python run.py` and having the serving listening on 5000, you can walk through the endpoint ``/`` and you will see the client 
+.. image:: readme_images/client.png
+  :width: 400
+  :alt: Client Page
+  
+* A connection is then established between client and the server. The server receives data from the client upon connection. You can check the logs on server and you will see : ``helpers.logger - INFO - Client is connected with message : {'data': "Client's connected!"}``
+* To simulate a POST request from Mandrill, I will send the following payload to the API 
+.. image:: readme_images/payload.png
+  :width: 200
+  :alt: Mandrill Payload
+* Two messages are logs by the server, respectively upon redis persistence confirmation and notification events sent to client. ``helpers.logger - INFO - Mandrills Events successfully stored on Redis`` and ``helpers.logger - INFO - Events sent to Client``
+* The client then displays the number of emails for each type of event 
+.. image:: readme_images/client_messages.png
+  :width: 400
+  :alt: Client receives events messages
 
 
 Tests
@@ -160,8 +163,7 @@ Security
 We can add more security to this application with these two options : 
 
 * Add CORS on the POST route to only allow receiving requests from `mandrillapp.com`. *I intentionnaly omit it for testing purposes*
-* Mandrill recommends authenticating webhook requests by comparing signatures. 
-See the link below `Authenticating WebHook Requests <https://mailchimp.com/developer/transactional/guides/track-respond-activity-webhooks/#authenticating-webhook-requests>`
+* Mandrill recommends authenticating webhook requests by comparing signatures. See the link below `Authenticating WebHook Requests <https://mailchimp.com/developer/transactional/guides/track-respond-activity-webhooks/#authenticating-webhook-requests>`_
 
 
 Limitations & Optimizations
@@ -171,16 +173,15 @@ Even though my code is solving the problem, I have some performance and resource
 To optimize my solution, I think
 
 * implement connection Pool to handle multiple connections
-* In case, we have different types of information to share among different types of users/clients: implement rooms to group 
-certain types of users
+* In case, we have different types of information to share among different types of users/clients: implement rooms to group certain types of users
 * control the amoung of data store on redis as Redis is having some size limit
 * Add Celery to process redis storage. In fact, when storing messages in redis, it is better to pass this task to a seperate worker.
 
 
-.. |Python-Versions| image:: https://img.shields.io/pypi/pyversions/pip?logo=python&logoColor=white   :alt: Python Version
+.. |Python-Versions| image:: https://img.shields.io/badge/python-3.10.6-blue   :alt: Python Version
 .. |pip-Version| image:: https://img.shields.io/pypi/v/pip?label=pip&logoColor=white   :alt: pip Version
 .. |flask-Version| image:: https://img.shields.io/pypi/v/flask?label=flask&logo=flask   :alt: flask Version
-.. |flask-socketio-Version| image:: https://img.shields.io/pypi/v/flask-socketio?color=p&label=flask-socketio   :alt: flask-socketio Version
+.. |flask-socketio| image:: https://img.shields.io/pypi/v/flask-socketio?color=p&label=flask-socketio
 .. |pytest-Version| image:: https://img.shields.io/pypi/v/pytest?label=pytest&logo=pytest   :alt: pytest Version
 .. |mock-Version| image:: https://img.shields.io/pypi/v/mock?label=mock&logo=mock   :alt: mock Version
 .. |black-Version| image:: https://img.shields.io/pypi/v/black?label=black&logo=black   :alt: black Version
